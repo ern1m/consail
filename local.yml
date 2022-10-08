@@ -15,7 +15,6 @@ services:
     depends_on:
       - postgres
       - redis
-      - mailhog
     volumes:
       - .:/app:z
     env_file:
@@ -54,12 +53,6 @@ services:
       - "9000:9000"
     command: /start-docs
 
-  mailhog:
-    image: mailhog/mailhog:v1.0.0
-    container_name: consailapi_local_mailhog
-    ports:
-      - "8025:8025"
-
   redis:
     image: redis:6
     container_name: consailapi_local_redis
@@ -71,7 +64,6 @@ services:
     depends_on:
       - redis
       - postgres
-      - mailhog
     ports: []
     command: /start-celeryworker
 
@@ -82,7 +74,6 @@ services:
     depends_on:
       - redis
       - postgres
-      - mailhog
     ports: []
     command: /start-celerybeat
 
