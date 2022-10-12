@@ -53,4 +53,4 @@ jobs:
           python -m pip install fabric==2.6.0 termcolor
 
       - name: Deploy Dev
-        run: fab deploy --env=local
+        run: fab deploy --env=.local
