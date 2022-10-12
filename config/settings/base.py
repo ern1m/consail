@@ -325,3 +325,5 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+DJANGO_DOMAIN = env("DJANGO_DOMAIN", default="")
