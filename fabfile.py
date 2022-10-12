@@ -52,10 +52,11 @@ def deploy(ctx, env):
             # )
 
 
-def docker_compose(runner, env, command):
+def docker_compose(runner, env: str, command):
     # runner could be
     # - c.run - run on remote machine specified by ssh Connection params
     # - c.local - runs on local machine
+    env.replace(".", "")
     cmd = f"docker-compose -p {project_name}_{env} -f {env}.yml {command}"
     cprint(cmd, "green")
     runner(cmd)
