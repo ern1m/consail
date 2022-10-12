@@ -31,7 +31,7 @@ def deploy(ctx, env):
         c.run(f"mkdir -p webapp && tar xmzf {code_archive} -C webapp")
 
         cprint("Copying secrets..", "cyan")
-        c.run(f"rsync -r ~/webapp/.envs/.{env} ~/webapp/.envs/")
+        c.run(f"rsync -r ~/webapp/.envs/{env} ~/webapp/.envs/")
 
         compose_runner = c.run  # run it on remote machine
         with c.cd("~/webapp/"):
