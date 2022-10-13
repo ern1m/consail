@@ -8,7 +8,7 @@ project_name = "cs_api"
 
 
 def get_connection(env):
-    envs = {"local": Connection(host="18.184.213.217", user="ubuntu")}
+    envs = {"dev": Connection(host="18.184.213.217", user="ubuntu")}
     try:
         return envs[env]
     except KeyError:
@@ -31,7 +31,7 @@ def deploy(ctx, env):
         c.run(f"mkdir -p webapp && tar xmzf {code_archive} -C webapp")
 
         cprint("Copying secrets..", "cyan")
-        c.run(f"rsync -r ~/webapp/.envs/.{env} ~/webapp/.envs/")
+        c.run(f"rsync -r ~/.envs/.{env} ~/webapp/.envs/")
 
         compose_runner = c.run  # run it on remote machine
         with c.cd("~/webapp/"):
