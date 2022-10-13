@@ -3,12 +3,18 @@ from invoke import Exit
 from invoke import run as local
 from termcolor import colored, cprint
 
+from config.settings.base import env
+
 # http://docs.pyinvoke.org/en/latest/concepts/invoking-tasks.html#task-command-line-arguments
+
+
 project_name = "cs_api"
+
+DJANGO_AWS_ADDRESS = env("DJANGO_AWS_ADDRESS", default=["example.com"])
 
 
 def get_connection(env):
-    envs = {"dev": Connection(host="18.184.213.217", user="ubuntu")}
+    envs = {"dev": Connection(host="52.29.62.5", user="ubuntu")}
     try:
         return envs[env]
     except KeyError:
