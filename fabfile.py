@@ -1,4 +1,3 @@
-from django.conf import settings
 from fabric import Connection, task
 from invoke import Exit
 from invoke import run as local
@@ -9,7 +8,7 @@ project_name = "cs_api"
 
 
 def get_connection(env):
-    envs = {"dev": Connection(host=f"{settings.AWS_ADDRESS}", user="ubuntu")}
+    envs = {"dev": Connection(host="52.29.62.5", user="ubuntu")}
     try:
         return envs[env]
     except KeyError:
