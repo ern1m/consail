@@ -173,3 +173,5 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 # }
 
 DEBUG = True
+
+DJANGO_AWS_ADDRESS = env("DJANGO_AWS_ADDRESS", default=["example.com"])
