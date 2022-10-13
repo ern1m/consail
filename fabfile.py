@@ -4,7 +4,7 @@ from invoke import run as local
 from termcolor import colored, cprint
 
 # http://docs.pyinvoke.org/en/latest/concepts/invoking-tasks.html#task-command-line-arguments
-project_name = "consail_api"
+project_name = "cs_api"
 
 
 def get_connection(env):
