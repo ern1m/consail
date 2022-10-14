@@ -46,7 +46,7 @@ services:
       - ./consailapi:/app/log/nginx
       - ./consailapi:/app/consailapi:z
     ports:
-      - 8052:80
+      - 80:80
     restart: on-failure
 
   redis:
