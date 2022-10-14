@@ -8,7 +8,7 @@ project_name = "cs_api"
 
 
 def get_connection(env):
-    envs = {"dev": Connection(host="52.29.62.5", user="ubuntu")}
+    envs = {"dev": Connection(host="consail.site", user="ubuntu")}
     try:
         return envs[env]
     except KeyError:
@@ -41,23 +41,20 @@ def deploy(ctx, env):
             docker_compose(
                 compose_runner, env, "run --rm django python manage.py migrate"
             )
-
             docker_compose(
                 compose_runner,
                 env,
                 "run --rm django python manage.py collectstatic --noinput",
             )
-            docker_compose(compose_runner, env, "up -d django celeryworker celerybeat")
-            # docker_compose(
-            #     compose_runner, env, "up -d django celeryworker celerybeat nginx"
-            # )
+            docker_compose(
+                compose_runner, env, "up -d django celeryworker celerybeat nginx"
+            )
 
 
-def docker_compose(runner, env: str, command):
+def docker_compose(runner, env, command):
     # runner could be
     # - c.run - run on remote machine specified by ssh Connection params
     # - c.local - runs on local machine
-
     cmd = f"docker-compose -p {project_name}_{env} -f {env}.yml {command}"
     cprint(cmd, "green")
     runner(cmd)
