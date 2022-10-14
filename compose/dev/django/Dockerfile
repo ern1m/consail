@@ -89,10 +89,10 @@ COPY --chown=django:django . ${APP_HOME}
 # make django owner of the WORKDIR directory as well.
 RUN chown django:django ${APP_HOME}
 
-RUN mkdir ${APP_HOME}/public/ \
-    && mkdir ${APP_HOME}/logs/ \
-    && chown django: ${APP_HOME}/public/ \
-    && chown django: ${APP_HOME}/logs/
+RUN mkdir ${APP_HOME}/_public/ \
+    && mkdir ${APP_HOME}/_logs/ \
+    && chown django: ${APP_HOME}/_public/ \
+    && chown django: ${APP_HOME}/_logs/
 
 USER django
 
