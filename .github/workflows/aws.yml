@@ -3,9 +3,6 @@ name: Deploy to Amazon ECS
 on:
   workflow_dispatch:
 
-  push:
-    branches: [ "develop" ]
-
 jobs:
   deploy:
     runs-on: ubuntu-latest

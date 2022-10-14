@@ -29,7 +29,7 @@ RUN pip wheel --wheel-dir /usr/src/app/wheels  \
 FROM python as python-run-stage
 
 ARG BUILD_ENVIRONMENT=dev
-ARG APP_HOME=/app_dev
+ARG APP_HOME=/app
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -89,10 +89,10 @@ COPY --chown=django:django . ${APP_HOME}
 # make django owner of the WORKDIR directory as well.
 RUN chown django:django ${APP_HOME}
 
-RUN mkdir ${APP_HOME}/_public/ \
-    && mkdir ${APP_HOME}/_logs/ \
-    && chown django: ${APP_HOME}/_public/ \
-    && chown django: ${APP_HOME}/_logs/
+RUN mkdir ${APP_HOME}/public/ \
+    && mkdir ${APP_HOME}/logs/ \
+    && chown django: ${APP_HOME}/public/ \
+    && chown django: ${APP_HOME}/logs/
 
 USER django
 
