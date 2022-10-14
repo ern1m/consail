@@ -26,10 +26,10 @@ services:
     build:
       context: .
       dockerfile: ./compose/dev/postgres/Dockerfile
-    image: consailapi_dev_postgres
+    image: cs_api_dev_postgres
     volumes:
-      - consailapi_dev_postgres_data:/var/lib/postgresql/data:Z
-      - consailapi_dev_postgres_data_backups:/backups:z
+      - cs_api_dev_postgres_data:/var/lib/postgresql/data:Z
+      - cs_api_dev_postgres_data_backups:/backups:z
     env_file:
       - ./.envs/.dev/.postgres
 
