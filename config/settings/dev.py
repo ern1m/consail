@@ -66,9 +66,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
 # ------------------------
 # STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# STATIC_URL = f"http://{DJANGO_DOMAIN}/static/"  # noqa
-STATIC_URL = "/static/"  # noqa
-STATIC_ROOT = "/app_dev/_public/static/"
+STATIC_URL = f"http://{DJANGO_DOMAIN}/static/"  # noqa
+# STATIC_URL = "/static/"  # noqa
+STATIC_ROOT = "/app/public/static/"
 STATICFILES_DIRS = [
     str(APPS_DIR / "static"),  # noqa
     # str(ROOT_DIR / "openapi"), # noqa
