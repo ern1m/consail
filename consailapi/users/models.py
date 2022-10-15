@@ -14,6 +14,8 @@ class User(AbstractUser, BaseModel):
     """
 
     email = models.EmailField(_("email address"), blank=False, null=True, unique=True)
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
 
     def get_absolute_url(self):
         """Get url for user's detail view.
