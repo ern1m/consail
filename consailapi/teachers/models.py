@@ -22,8 +22,8 @@ class Teacher(User):
 
     def __str__(self) -> str:
         name_display = self.name_display.strip() if self.name_display else None
-        return name_display or self.get_name_display
+        return name_display or self.get_name_display or self.email
 
     @property
     def get_name_display(self) -> str:
-        return f"{self.degrees} {self.get_full_name()}"
+        return f"{self.degrees or ''} {self.get_full_name() or ''}".strip()

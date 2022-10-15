@@ -13,7 +13,7 @@ class User(AbstractUser, BaseModel):
     check forms.SignupForm and forms.SocialSignupForms accordingly.
     """
 
-    email = models.EmailField(_("email address"), blank=False, null=True)
+    email = models.EmailField(_("email address"), blank=False, null=True, unique=True)
 
     def get_absolute_url(self):
         """Get url for user's detail view.
