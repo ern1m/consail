@@ -43,7 +43,7 @@ services:
       - /home/ubuntu/cs-api/logs:/var/log/nginx
       - cs_api_dev_public:/app/public
     ports:
-      - 80:80
+      - 8052:80
     restart: on-failure
 
   redis:
