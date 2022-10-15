@@ -81,7 +81,8 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "consailapi.users",
     "consailapi.shared",
-    "consailapi.teachers"
+    "consailapi.teachers",
+    "consailapi.students"
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

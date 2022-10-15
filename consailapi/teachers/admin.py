@@ -7,9 +7,9 @@ from consailapi.users.admin import UserAdmin
 
 @admin.register(Teacher)
 class TeacherAdmin(UserAdmin):
-    list_display = ["email", "degrees", "first_name", "last_name", "uuid", "created_at"]
+    list_display = ["email", "__str__", "uuid", "created_at"]
     fieldsets = (
-        (None, {"fields": ("username", "password")}),
+        (None, {"fields": ("password",)}),
         (
             _("Personal info"),
             {"fields": ("degrees", "first_name", "last_name", "name_display", "email")},
