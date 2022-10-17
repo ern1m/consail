@@ -27,3 +27,6 @@ class AuthenticationService:
         user = self.authenticate(login_data=login_data, request=request)
         token, created = Token.objects.get_or_create(user=user)
         return token
+
+    def destroy_token(self, user: User) -> None:
+        Token.objects.filter(user=user).all().delete()
