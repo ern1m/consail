@@ -105,7 +105,7 @@ AUTH_USER_MODEL = "users.User"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
 LOGIN_REDIRECT_URL = "users:redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
-LOGIN_URL = "authentication_login"
+LOGIN_URL = "auth:login"
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
