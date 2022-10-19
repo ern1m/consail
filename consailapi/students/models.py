@@ -7,3 +7,6 @@ class Student(User):
     class Meta:
         verbose_name = _("student")
         verbose_name_plural = _("students")
+
+    def __str__(self):
+        return self.email

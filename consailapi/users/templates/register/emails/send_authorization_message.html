@@ -1,0 +1,27 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Email confirmation</title>
+</head>
+<body>
+
+  <p>
+  <h1>
+    {% translate "Hi" %} <strong>{{ user.get_full_name }} </strong>
+  </h1>
+  </p>
+
+  <p>
+    Click <a href="https://consail.site">here</a> to confirm your email address
+  </p>
+
+  <p>
+    {% translate "Best regards" %}
+    <br />
+    <strong>{% translate "Consail team" %}</strong>
+  </p>
+
+</body>
+</html>

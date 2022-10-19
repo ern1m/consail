@@ -174,4 +174,14 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 #     "LOGOUT_URL": "/api/auth/logout/",
 # }
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "ConsailAPI API",
+    "DESCRIPTION": "Documentation of API endpoints of ConsailAPI",
+    "VERSION": "1.0.0",
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+    "SERVERS": [
+        {"url": "https://consail.site/api", "description": "Local Development server"},
+    ],
+}
+
 DEBUG = True
