@@ -24,8 +24,7 @@ class TestUserViewSet:
         response = view.me(request)
 
         assert response.data == {
-            "username": user.username,
+            "email": user.email,
             "first_name": user.first_name,
             "last_name": user.last_name,
-            "url": f"http://testserver/api/users/{user.username}/",
         }

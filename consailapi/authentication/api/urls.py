@@ -1,9 +1,13 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
-from consailapi.authentication.api.views import login, logout
+from consailapi.authentication.api.views import RegisterViewSet
 
-app_name = "auth"
+router = DefaultRouter()
+
+
+router.register("register", RegisterViewSet, basename="student-register-view-set")
+
 urlpatterns = [
-    path("login/", login, name="login"),
-    path("logout/", logout, name="logout"),
+    path("", include(router.urls), name="student-register"),
 ]
