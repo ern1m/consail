@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from consailapi.users.models import User
+# from consailapi.users.models import User
 
 
 class TestUserAdmin:
@@ -14,18 +14,18 @@ class TestUserAdmin:
         response = admin_client.get(url, data={"q": "test"})
         assert response.status_code == 200
 
-    def test_add(self, admin_client):
-        url = reverse("admin:users_user_add")
-        response = admin_client.get(url)
-        assert response.status_code == 200
-
-        response = admin_client.post(
-            url,
-            data={
-                "username": "test",
-                "password1": "My_R@ndom-P@ssw0rd",
-                "password2": "My_R@ndom-P@ssw0rd",
-            },
-        )
-        assert response.status_code == 302
-        assert User.objects.filter(username="test").exists()
+    # def test_add(self, admin_client):
+    #     url = reverse("admin:users_user_add")
+    #     response = admin_client.get(url)
+    #     assert response.status_code == 200
+    #
+    #     response = admin_client.post(
+    #         url,
+    #         data={
+    #             "username": "test",
+    #             "password1": "My_R@ndom-P@ssw0rd",
+    #             "password2": "My_R@ndom-P@ssw0rd",
+    #         },
+    #     )
+    #     assert response.status_code == 302
+    #     assert User.objects.filter(username="test").exists()
