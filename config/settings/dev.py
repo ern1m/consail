@@ -180,7 +180,7 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SERVERS": [
-        {"url": "https://consail.site/api", "description": "Local Development server"},
+        {"url": "https://consail.site/", "description": "Local Development server"},
     ],
 }
 
