@@ -18,7 +18,7 @@ class UserViewSet(
 ):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    lookup_field = "username"
+    lookup_field = "uuid"
 
     def get_queryset(self, *args, **kwargs):
         assert isinstance(self.request.user.id, int)
