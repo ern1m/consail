@@ -23,5 +23,6 @@ class StudentService:
             raise ValidationError("Password are not the same")
 
         post_data.pop("repeat_password")
+        post_data["username"] = post_data["email"]
         post_data["is_active"] = False
         return post_data
