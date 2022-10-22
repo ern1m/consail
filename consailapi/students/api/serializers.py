@@ -1,4 +1,4 @@
-from django.conf import settings
+# from django.conf import settings
 from rest_framework import serializers
 
 from consailapi.students.models import Student
@@ -10,8 +10,8 @@ class RegisterStudentSerializer(serializers.Serializer):
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
     password = serializers.CharField(
-        required=True, validators=[settings.AUTH_PASSWORD_VALIDATORS]
-    )
+        required=True
+    )  # validators=[x.items for x in settings.AUTH_PASSWORD_VALIDATORS])
     repeat_password = serializers.CharField(required=True)
 
 
