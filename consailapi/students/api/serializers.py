@@ -1,6 +1,7 @@
 # from django.conf import settings
 from rest_framework import serializers
 
+from consailapi.school.api.serializers import MajorSerializer
 from consailapi.students.models import Student
 from consailapi.users.api.serializers import UserSerializer
 
@@ -26,4 +27,20 @@ class StudentSerializer(UserSerializer):
             "username",
             "password",
             "is_active",
+        ]
+
+
+class StudentDetailSerializer(serializers.ModelSerializer):
+    major = MajorSerializer()
+
+    class Meta:
+        model = Student
+        lookup_field = "uuid"
+        fields = [
+            "first_name",
+            "last_name",
+            "year",
+            "major",
+            "email",
+            "uuid",
         ]
