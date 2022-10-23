@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from consailapi.shared.models import BaseModel
 
-class Department(models.Model):
+
+class Department(BaseModel):
     name = models.CharField(_("Department name"), blank=True, max_length=100)
 
     class Meta:
@@ -13,7 +15,7 @@ class Department(models.Model):
         return self.name
 
 
-class Major(models.Model):
+class Major(BaseModel):
     name = models.CharField(_("Major"), blank=True, max_length=100)
     department = models.ForeignKey(
         Department,
