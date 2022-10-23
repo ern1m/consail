@@ -17,7 +17,7 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("consailapi.users.urls", namespace="users")),
-    path("auth/", include("consailapi.authentication.urls", namespace="auth")),
+    path("api/auth/", include("consailapi.authentication.api.urls", namespace="auth")),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
