@@ -66,7 +66,7 @@ class RegisterViewSet(
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         AuthenticationService().destroy_token(user=request.user)
         return Response({"message": AuthenticationMessage.LOGOUT_SUCCESSFUL})
 
