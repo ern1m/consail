@@ -1,7 +1,12 @@
+from copy import deepcopy
+
 from django import forms
 from django.contrib.auth import forms as admin_forms
 from django.contrib.auth import get_user_model, password_validation
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+
+from consailapi.school.models import Major
 
 User = get_user_model()
 
@@ -11,13 +16,15 @@ class UserAdminChangeForm(admin_forms.UserChangeForm):
         model = User
 
 
-class UserAdminCreationForm(admin_forms.UserCreationForm):
-    """
-    Form for User Creation in the Admin Area.
-    To change user signup, see UserSignupForm and UserSocialSignupForm.
-    """
-
-    email = forms.EmailField(required=True)
+class UserCreationForm(admin_forms.UserCreationForm):
+    first_name = forms.CharField(label="First name", required=True)
+    last_name = forms.CharField(label="Last name", required=True)
+    email = forms.EmailField(label="Email", required=True)
+    major = forms.ModelChoiceField(
+        label="Major",
+        queryset=Major.objects.all(),
+        required=False,
+    )
     password1 = forms.CharField(
         label=_("Password"),
         strip=False,
@@ -33,21 +40,42 @@ class UserAdminCreationForm(admin_forms.UserCreationForm):
 
     class Meta(admin_forms.UserCreationForm.Meta):
         model = User
-        fields = ("email", "password1", "password2")
+        fields = (
+            "first_name",
+            "last_name",
+            "email",
+            "username",
+        )
 
-    # def save(self, *args, **kwargs):
-    #     """
-    #     Save user. Create if necessary.
-    #     :param commit:
-    #     :return:
-    #     """
-    #
-    #     self.instance, _c = User.objects.update_or_create(
-    #         email=self.cleaned_data["email"],
-    #         defaults={
-    #             "first_name": self.cleaned_data["first_name"],
-    #             "last_name": self.cleaned_data["last_name"],
-    #             "username": self.cleaned_data["email"],
-    #             "is_active": False,
-    #         },
-    #     )
+        error_messages = {
+            "email": {"unique": _("This email has already been taken.")},
+            "username": {"unique": _("This username has already been taken.")},
+        }
+
+    def clean_email(self):
+        """
+        Check if user already exists in database and have activated account
+        :return:
+        """
+
+        cleaned_data = deepcopy(self.cleaned_data)
+
+        if self.cleaned_data.get("email"):
+            cleaned_data["email"] = self.cleaned_data["email"].lower()
+        if User.objects.filter(email__iexact=cleaned_data.get("email", "")).exists():
+            raise ValidationError(_("Username already exists"))
+
+        return cleaned_data["email"]
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+
+        user.first_name = self.cleaned_data["first_name"]
+        user.last_name = self.cleaned_data["last_name"]
+        user.email = self.cleaned_data["email"].lower()
+        user.username = self.cleaned_data["email"].lower()
+        user.is_active = False
+
+        if commit:
+            user.save()
+        return user
