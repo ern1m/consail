@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("school", "0002_remove_major_student"),
         ("students", "0003_student_year"),
     ]
 
