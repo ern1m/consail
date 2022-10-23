@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from consailapi.students.models import Student
-
 
 class Department(models.Model):
     name = models.CharField(_("Department name"), blank=True, max_length=100)
@@ -17,13 +15,6 @@ class Department(models.Model):
 
 class Major(models.Model):
     name = models.CharField(_("Major"), blank=True, max_length=100)
-    student = models.ForeignKey(
-        Student,
-        null=True,
-        verbose_name=_("Students Major"),
-        on_delete=models.SET_NULL,
-        related_name="major",
-    )
     department = models.ForeignKey(
         Department,
         null=True,
