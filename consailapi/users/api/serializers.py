@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
-    user_type = serializers.CharField(required=True)
+    user_type = serializers.CharField(required=False, read_only=True)
     uuid = serializers.UUIDField(read_only=True)
 
     class Meta:
