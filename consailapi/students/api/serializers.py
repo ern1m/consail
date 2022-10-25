@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
@@ -21,6 +22,7 @@ class RegisterStudentSerializer(serializers.Serializer):
 class StudentSerializer(UserSerializer):
     username = serializers.CharField(write_only=True)
     is_active = serializers.BooleanField(write_only=True)
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = Student
@@ -30,6 +32,9 @@ class StudentSerializer(UserSerializer):
             "password",
             "is_active",
         ]
+
+    def validate_password(self, password: str):
+        return make_password(password)
 
 
 class StudentDetailSerializer(serializers.ModelSerializer):
