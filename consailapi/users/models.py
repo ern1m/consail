@@ -71,6 +71,6 @@ class User(AbstractUser, BaseModel):
     @property
     def user_type(self) -> str | None:
         if hasattr(self, "student"):
-            return UserType.STUDENT
+            return UserType.STUDENT.label
         elif hasattr(self, "teacher"):
-            return UserType.TEACHER
+            return UserType.TEACHER.label

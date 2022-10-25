@@ -8,9 +8,10 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
+    user_type = serializers.CharField(required=True)
     uuid = serializers.UUIDField(read_only=True)
 
     class Meta:
         model = User
-        fields = ["email", "first_name", "last_name", "uuid"]
+        fields = ["email", "first_name", "last_name", "uuid", "user_type"]
         lookup_field = "uuid"

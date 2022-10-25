@@ -14,7 +14,7 @@ class AuthenticationService:
 
         if email and password:
             user = authenticate(request, email=email, password=password)
-            if not user:
+            if not user or not user.user_type:
                 raise serializers.ValidationError(
                     AuthenticationMessage.INVALID_CREDENTIALS
                 )
@@ -26,7 +26,7 @@ class AuthenticationService:
     def create_token(self, login_data: dict, request: Request) -> Token | User:
         user = self.authenticate(login_data=login_data, request=request)
         token, created = Token.objects.get_or_create(user=user)
-        return token, user
+        return token
 
     def destroy_token(self, user: User) -> None:
         Token.objects.filter(user=user).all().delete()
