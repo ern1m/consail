@@ -23,10 +23,10 @@ class AuthenticationService:
 
         return user  # noqa
 
-    def create_token(self, login_data: dict, request: Request) -> Token:
+    def create_token(self, login_data: dict, request: Request) -> Token | User:
         user = self.authenticate(login_data=login_data, request=request)
         token, created = Token.objects.get_or_create(user=user)
-        return token
+        return token, user
 
     def destroy_token(self, user: User) -> None:
         Token.objects.filter(user=user).all().delete()

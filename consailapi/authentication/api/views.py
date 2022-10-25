@@ -26,10 +26,11 @@ class LoginView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        token = AuthenticationService().create_token(
+        token, user = AuthenticationService().create_token(
             serializer.validated_data, self.request
         )
-        return Response({"token": token.key})
+
+        return Response({"token": token.key, "user_type": user.user_type.label})
 
 
 login = LoginView.as_view()

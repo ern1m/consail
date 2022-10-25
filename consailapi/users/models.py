@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from consailapi.shared.models import BaseModel
+from consailapi.users.consts import UserType
 
 
 class UserManager(BaseUserManager):
@@ -66,3 +67,10 @@ class User(AbstractUser, BaseModel):
 
         """
         return reverse("users:detail", kwargs={"username": self.username})
+
+    @property
+    def user_type(self) -> str | None:
+        if hasattr(self, "student"):
+            return UserType.STUDENT
+        elif hasattr(self, "teacher"):
+            return UserType.TEACHER
