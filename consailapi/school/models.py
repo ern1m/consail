@@ -16,7 +16,7 @@ class Department(BaseModel):
 
 
 class Major(BaseModel):
-    name = models.CharField(_("Major"), blank=True, max_length=100)
+    name = models.CharField(_("Major"), blank=False, max_length=100)
     department = models.ForeignKey(
         Department,
         null=True,
