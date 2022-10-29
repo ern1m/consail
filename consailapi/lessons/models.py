@@ -24,7 +24,7 @@ class Subject(BaseModel):
         verbose_name_plural = _("Subjects")
 
     def __str__(self) -> str:
-        return _(f"{self.name} - {self.major}")
+        return f"{self.name} - {self.major}"
 
 
 class Lesson(BaseModel):
@@ -59,7 +59,7 @@ class Lesson(BaseModel):
         verbose_name_plural = _("Lessons")
 
     def __str__(self):
-        return _(f"{self.subject}")
+        return f"{self.subject}"
 
     @property
     def start_time_display(self) -> str:
@@ -71,4 +71,4 @@ class Lesson(BaseModel):
 
     @property
     def full_date(self) -> str:
-        return _(f"{self.day} {self.start_time}-{self.end_time}")
+        return f"{self.day} {self.start_time}-{self.end_time}"
