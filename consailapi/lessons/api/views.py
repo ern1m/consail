@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from consailapi.lessons.api.serializers import LessonListSerializer, SubjectSerializer
 from consailapi.lessons.models import Lesson, Subject
+from consailapi.teachers.consts import ResponseMessages
 from consailapi.teachers.models import Teacher
 
 
@@ -41,5 +42,5 @@ class LessonViewSet(viewsets.GenericViewSet, ListModelMixin):
         try:
             teacher = Teacher.objects.get(uuid=teacher_uuid)
         except Teacher.DoesNotExist:
-            raise NotFound("aaa")
+            raise NotFound(ResponseMessages.TEACHER_NOT_FOUND)
         return self.queryset.filter(teacher=teacher)
