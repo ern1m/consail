@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from consailapi.school.models import Major
@@ -72,3 +74,24 @@ class Lesson(BaseModel):
     @property
     def full_date(self) -> str:
         return f"{self.day} {self.start_time}-{self.end_time}"
+
+    def clean(self) -> None:
+
+        if self.start_time >= self.end_time:
+            raise ValidationError(_("Start time can't be greater than end time"))
+
+        if (
+            self.start_time
+            and self.end_time
+            and Lesson.objects.filter(teacher=self.teacher)
+            .exclude(id=self.id)
+            .filter(
+                Q(start_time__range=(self.start_time, self.end_time))
+                | Q(end_time__range=(self.start_time, self.end_time))
+                | Q(start_time__lte=self.start_time, end_time__gte=self.end_time)
+            )
+            .exists()
+        ):
+            raise ValidationError(
+                _("Teacher can't have more than one lesson at the same time")
+            )
