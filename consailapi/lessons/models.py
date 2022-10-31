@@ -86,9 +86,14 @@ class Lesson(BaseModel):
             and Lesson.objects.filter(teacher=self.teacher)
             .exclude(id=self.id)
             .filter(
-                Q(start_time__range=(self.start_time, self.end_time))
-                | Q(end_time__range=(self.start_time, self.end_time))
-                | Q(start_time__lte=self.start_time, end_time__gte=self.end_time)
+                Q(
+                    (
+                        Q(start_time__lt=self.end_time)
+                        & Q(start_time__gt=self.start_time)
+                    )
+                    | (Q(end_time__lt=self.end_time) & Q(end_time__gt=self.start_time))
+                    | Q(start_time__lte=self.start_time, end_time__gte=self.end_time)
+                )
             )
             .exists()
         ):

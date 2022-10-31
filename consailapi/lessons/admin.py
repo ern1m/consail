@@ -17,5 +17,6 @@ class LessonAdmin(admin.ModelAdmin):
         "uuid",
         "start_time_display",
         "end_time_display",
+        "day",
         "teacher",
     )
