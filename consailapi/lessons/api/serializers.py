@@ -12,7 +12,7 @@ class SubjectSerializer(serializers.ModelSerializer):
         fields = ["uuid", "name", "major"]
 
 
-class LessonListSerializer(serializers.ModelSerializer):
+class LessonBaseSerializer(serializers.ModelSerializer):
     subject = SubjectSerializer()
 
     class Meta:
@@ -23,5 +23,20 @@ class LessonListSerializer(serializers.ModelSerializer):
             "day",
             "start_time_display",
             "end_time_display",
+            "room",
+        ]
+
+
+class LessonActionSerializer(serializers.ModelSerializer):
+    subject_uuid = serializers.UUIDField()
+
+    class Meta:
+        model = Lesson
+        fields = [
+            "uuid",
+            "subject_uuid",
+            "day",
+            "start_time",
+            "end_time",
             "room",
         ]
