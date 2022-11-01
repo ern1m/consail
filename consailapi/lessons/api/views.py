@@ -3,7 +3,7 @@ from typing import Any
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.mixins import CreateModelMixin, ListModelMixin
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -30,7 +30,7 @@ class SubjectViewSet(viewsets.GenericViewSet, ListModelMixin):
     ]
 
 
-class LessonViewSet(viewsets.GenericViewSet, CreateModelMixin):
+class LessonViewSet(viewsets.GenericViewSet, CreateModelMixin, DestroyModelMixin):
     serializer_class = LessonActionSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     queryset = Lesson.objects.all().select_related("teacher", "subject")
@@ -51,3 +51,9 @@ class LessonViewSet(viewsets.GenericViewSet, CreateModelMixin):
         return Response(
             LessonBaseSerializer(lesson).data, status=status.HTTP_201_CREATED
         )
+
+    def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        teacher = request.user.teacher  # noqa
+        lesson = self.queryset.filter(uuid=kwargs.get("uuid"), teacher=teacher).first()
+        LessonService(lesson=lesson).delete()
+        return Response(status=status.HTTP_200_OK)

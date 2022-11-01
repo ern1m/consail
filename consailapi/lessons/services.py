@@ -24,3 +24,8 @@ class LessonService:
         except ValidationError as e:
             raise RestValidationError(e.messages)
         return self.lesson
+
+    def delete(self) -> None:
+        if not self.lesson:
+            raise NotFound("Lesson not found")
+        self.lesson.delete()
