@@ -11,7 +11,7 @@ class LessonService:
         self.lesson = lesson
 
     def create(self, lesson_data: dict, teacher: Teacher) -> Lesson:
-        subject_uuid = lesson_data.pop("subject_uuid")
+        subject_uuid = lesson_data.pop("subject_uuid", None)
         try:
             subject = Subject.objects.get(uuid=subject_uuid)
         except Subject.DoesNotExist:
@@ -29,3 +29,17 @@ class LessonService:
         if not self.lesson:
             raise NotFound("Lesson not found")
         self.lesson.delete()
+
+    def update(self, lesson_data: dict) -> Lesson:
+        subject_uuid = lesson_data.pop("subject_uuid", None)
+        if subject_uuid:
+            try:
+                subject = Subject.objects.get(uuid=subject_uuid)
+            except Subject.DoesNotExist:
+                raise NotFound("Missing subject")
+            self.lesson.subject = subject
+        for attr, value in lesson_data.items():
+            setattr(self.lesson, attr, value)
+        self.lesson.full_clean()
+        self.lesson.save()
+        return self.lesson

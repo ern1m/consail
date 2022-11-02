@@ -35,7 +35,7 @@ class Lesson(BaseModel):
         verbose_name=_("subject"),
         related_name=_("lessons"),
         null=True,
-        blank=True,
+        blank=False,
         on_delete=models.CASCADE,
     )
     teacher = models.ForeignKey(
@@ -83,7 +83,7 @@ class Lesson(BaseModel):
         if (
             self.start_time
             and self.end_time
-            and Lesson.objects.filter(teacher=self.teacher)
+            and Lesson.objects.filter(teacher=self.teacher, day=self.day)
             .exclude(id=self.id)
             .filter(
                 Q(
