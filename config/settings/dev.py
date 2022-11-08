@@ -185,6 +185,7 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SERVERS": [
+        {"url": "https://siema.consail.site/", "description": "Development server"},
         {"url": "https://api.consail.site/", "description": "Development server"},
     ],
 }
