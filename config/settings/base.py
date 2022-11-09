@@ -82,8 +82,8 @@ LOCAL_APPS = [
     "consailapi.teachers",
     "consailapi.students",
     "consailapi.school",
-    "consailapi.lessons"
-    # Your stuff: custom apps go here
+    "consailapi.lessons",
+    "consailapi.consultation",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
