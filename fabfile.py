@@ -8,7 +8,7 @@ project_name = "cs_api"
 
 
 def get_connection(env):
-    envs = {"dev": Connection(host="siema.consail.site", user="ubuntu")}
+    envs = {"dev": Connection(host="consail.site", user="ubuntu")}
     try:
         return envs[env]
     except KeyError:
