@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
+from consailapi.consultations.consts import ReservationDuration
 from consailapi.shared.helpers import get_time_formatted
 from consailapi.shared.models import BaseModel
 from consailapi.teachers.models import Teacher
@@ -50,3 +51,28 @@ class Consultation(BaseModel):
             raise ValidationError(
                 _("Teacher can't have more than one consultation at the same time")
             )
+
+
+class ReservationType(BaseModel):
+    duration = models.DurationField(
+        _("duration"),
+        null=False,
+        blank=False,
+        default=ReservationDuration.FIFTEEN_MINUTES,
+        choices=ReservationDuration.choices,
+    )
+    is_disabled = models.BooleanField(_("is disabled"), default=False)
+    teacher = models.ForeignKey(
+        Teacher,
+        verbose_name=_("teacher"),
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = _("Reservation type")
+        verbose_name_plural = _("Reservation types")
+
+    def __str__(self) -> str:
+        return f"Reservation type {self.duration.seconds/60}min".replace(".0", "")
