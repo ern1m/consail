@@ -8,6 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("students", "0003_student_year"),
+        ("school", "0002_alter_major_name")
     ]
 
     operations = [
