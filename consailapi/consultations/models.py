@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
@@ -52,6 +54,8 @@ class Consultation(BaseModel):
             raise ValidationError(
                 _("Teacher can't have more than one consultation at the same time")
             )
+        if self.end_time - self.start_time < timedelta(minutes=15):
+            raise ValidationError(_("Consultation should be at least 15 minutes long"))
 
 
 class ReservationType(BaseModel):
