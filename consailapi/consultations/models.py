@@ -1,8 +1,8 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 
 from consailapi.consultations.consts import ReservationDuration
@@ -27,9 +27,16 @@ class Consultation(BaseModel):
     class Meta:
         verbose_name = _("Consultation")
         verbose_name_plural = _("Consultations")
+        ordering = [
+            "start_time",
+        ]
 
     def __str__(self) -> str:
         return f"{self.start_time.date()}: {get_time_formatted(self.start_time)}-{get_time_formatted(self.end_time)}"
+
+    @property
+    def reservations(self) -> QuerySet["Reservation"]:
+        return Reservation.objects.filter(slots__in=self.slots.all())
 
     def clean(self) -> None:
         if self.start_time >= self.end_time:
@@ -105,6 +112,15 @@ class Reservation(BaseModel):
     class Meta:
         verbose_name = _("Reservation")
         verbose_name_plural = _("Reservations")
+        ordering = [
+            "start_time",
+        ]
+
+    def __str__(self) -> str:
+        return (
+            f"Reservation for {self.student} ({get_time_formatted(self.start_time)}-"
+            f"{get_time_formatted(self.end_time)})"
+        )
 
 
 class ReservationSlot(BaseModel):
@@ -129,3 +145,13 @@ class ReservationSlot(BaseModel):
     class Meta:
         verbose_name = _("Reservation slot")
         verbose_name_plural = _("Reservation slots")
+        ordering = [
+            "start_time",
+        ]
+
+    def __str__(self) -> str:
+        return f"Slot for consultation {self.consultation} starting {get_time_formatted(self.start_time)}"
+
+    @property
+    def end_time(self) -> datetime:
+        return self.start_time + timedelta(minutes=15)
