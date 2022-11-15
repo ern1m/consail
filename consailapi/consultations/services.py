@@ -49,3 +49,22 @@ class ConsultationService:
                 slot.reservation.is_cancelled = True
                 slot.reservation.save()
         self.consultation.delete()
+
+    @transaction.atomic
+    def update_hours(self, consultation_data: dict) -> Consultation:
+        if not self.consultation:
+            raise ValueError("Missing consultation")
+        for slot in self.consultation.slots.all():
+            if slot.reservation:
+                slot.reservation.is_cancelled = True
+                slot.reservation.save()
+            slot.delete()
+        for attr, value in consultation_data.items():
+            setattr(self.consultation, attr, value)
+        try:
+            self.consultation.full_clean()
+            self.consultation.save()
+        except ValidationError as e:
+            raise RestValidationError(e.messages)
+        ReservationSlotService().create_for_consultation(consultation=self.consultation)
+        return self.consultation

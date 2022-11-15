@@ -32,6 +32,7 @@ class ReservationTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Reservation)
 class ReservationAdmin(admin.ModelAdmin):
+    list_display = ["student", "teacher", "uuid", "start_time", "end_time"]
     readonly_fields = [
         "uuid",
     ]
@@ -40,6 +41,7 @@ class ReservationAdmin(admin.ModelAdmin):
 
 @admin.register(ReservationSlot)
 class ReservationSlot(admin.ModelAdmin):
+    list_display = ["consultation", "start_time", "uuid", "reservation"]
     readonly_fields = [
         "uuid",
     ]
