@@ -162,6 +162,9 @@ ignore_logger("django.security.DisallowedHost")
 
 CORS_ALLOWED_ORIGINS = [
     "https://consail.site",
+    "https://www.consail.site",
+    "https://api.consail.site",
+    "https://www.api.consail.site",
     "http://127.0.0.1:4200",
     "http://localhost:4200",
 ]
