@@ -1,6 +1,8 @@
 from typing import Any
 
 from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
@@ -9,9 +11,11 @@ from rest_framework.viewsets import ModelViewSet
 from consailapi.consultations.api.serializers import (
     ConsultationDetailSerializer,
     ConsultationSimpleActionSerializer,
+    ReservationSerializer,
+    ReservationUuidSerializer,
 )
-from consailapi.consultations.models import Consultation
-from consailapi.consultations.services import ConsultationService
+from consailapi.consultations.models import Consultation, Reservation
+from consailapi.consultations.services import ConsultationService, ReservationService
 from consailapi.users.permissions import IsTeacherPermission
 
 
@@ -24,6 +28,8 @@ class ConsultationViewSet(ModelViewSet):
     def get_serializer_class(self) -> type[BaseSerializer]:
         if self.action in ["create", "update", "partial_update", "list"]:
             return ConsultationSimpleActionSerializer
+        elif self.action == "cancel_reservation":
+            return ReservationUuidSerializer
         else:
             return ConsultationDetailSerializer
 
@@ -65,3 +71,27 @@ class ConsultationViewSet(ModelViewSet):
     def partial_update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         kwargs["partial"] = True
         return self.update(request, *args, **kwargs)
+
+    @action(
+        detail=True,
+        methods=[
+            "POST",
+        ],
+    )
+    def cancel_reservation(
+        self, request: Request, *args: Any, **kwargs: Any
+    ) -> Response:
+        consultation = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            uuid = serializer.validated_data.get("reservation_uuid")
+            reservation = consultation.reservations.filter(
+                is_cancelled=False, uuid=uuid
+            ).first()
+        except Reservation.DoesNotExist:
+            raise NotFound("Missing reservation")
+        reservation = ReservationService(reservation).cancel_reservation()
+        return Response(
+            ReservationSerializer(reservation).data, status=status.HTTP_200_OK
+        )

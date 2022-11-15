@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework.exceptions import ValidationError as RestValidationError
 
-from consailapi.consultations.models import Consultation, ReservationSlot
+from consailapi.consultations.models import Consultation, Reservation, ReservationSlot
 from consailapi.teachers.models import Teacher
 
 
@@ -68,3 +68,16 @@ class ConsultationService:
             raise RestValidationError(e.messages)
         ReservationSlotService().create_for_consultation(consultation=self.consultation)
         return self.consultation
+
+
+class ReservationService:
+    def __init__(self, reservation: Reservation | None = None):
+        self.reservation = reservation
+
+    def cancel_reservation(self) -> Reservation:
+        if not self.reservation:
+            raise ValueError("Missing reservation")
+        self.reservation.is_cancelled = True
+        self.reservation.save()
+        self.reservation.slots.update(reservation=None)
+        return self.reservation

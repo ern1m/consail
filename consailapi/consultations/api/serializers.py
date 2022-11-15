@@ -24,3 +24,13 @@ class ConsultationDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Consultation
         fields = ["uuid", "start_time", "end_time", "reservations"]
+
+
+class ReservationUuidSerializer(serializers.ModelSerializer):
+    reservation_uuid = serializers.UUIDField()
+
+    class Meta:
+        model = Reservation
+        fields = [
+            "reservation_uuid",
+        ]
