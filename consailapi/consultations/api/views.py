@@ -26,7 +26,13 @@ class ConsultationViewSet(ModelViewSet):
     permission_classes = (IsTeacherPermission,)
 
     def get_serializer_class(self) -> type[BaseSerializer]:
-        if self.action in ["create", "update", "partial_update", "list"]:
+        if self.action in [
+            "create",
+            "update",
+            "partial_update",
+            "list",
+            "create_for_a_month_forward",
+        ]:
             return ConsultationSimpleActionSerializer
         elif self.action == "cancel_reservation":
             return ReservationUuidSerializer
@@ -77,6 +83,7 @@ class ConsultationViewSet(ModelViewSet):
         methods=[
             "POST",
         ],
+        url_path="cancel-reservation",
     )
     def cancel_reservation(
         self, request: Request, *args: Any, **kwargs: Any
@@ -95,3 +102,16 @@ class ConsultationViewSet(ModelViewSet):
         return Response(
             ReservationSerializer(reservation).data, status=status.HTTP_200_OK
         )
+
+    @action(detail=False, methods=["POST"], url_path="create-multiple")
+    def create_for_a_month_forward(
+        self, request: Request, *args: Any, **kwargs: Any
+    ) -> Response:
+        teacher = self.request.user.teacher  # noqa
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        consultations = ConsultationService().create_multiple(
+            teacher=teacher, consultation_data=serializer.validated_data
+        )
+        response_data = self.get_serializer(consultations, many=True).data
+        return Response(response_data, status=status.HTTP_201_CREATED)

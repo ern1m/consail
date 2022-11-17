@@ -10,10 +10,6 @@ on:
     branches: [ "master", "main", "develop" ]
     paths-ignore: [ "docs/**" ]
 
-  push:
-    branches: [ "master", "main", "develop" ]
-    paths-ignore: [ "docs/**" ]
-
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
