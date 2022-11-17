@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import timedelta
 
 from django.core.exceptions import ValidationError
@@ -18,9 +19,12 @@ class ReservationSlotService:
             slot = ReservationSlot(
                 reservation=None, consultation=consultation, start_time=slot_start_time
             )
-            slot.full_clean()
-            slot.save()
-            slot_start_time += timedelta(minutes=15)
+            try:
+                slot.full_clean()
+                slot.save()
+                slot_start_time += timedelta(minutes=15)
+            except ValidationError as e:
+                raise RestValidationError(e.messages)
 
 
 class ConsultationService:
@@ -38,6 +42,29 @@ class ConsultationService:
         ReservationSlotService().create_for_consultation(consultation=consultation)
         self.consultation = consultation
         return consultation
+
+    @transaction.atomic
+    def create_multiple(
+        self, teacher: Teacher, consultation_data: dict
+    ) -> [Consultation]:
+        data = deepcopy(consultation_data)
+        consultations = []
+        for i in range(0, 5):
+            data["start_time"] = consultation_data["start_time"] + timedelta(
+                days=(7 * i)
+            )
+            data["end_time"] = consultation_data["end_time"] + timedelta(days=(7 * i))
+            consultation = Consultation(teacher=teacher, **data)
+            try:
+                consultation.full_clean()
+                consultation.save()
+            except ValidationError as e:
+                raise RestValidationError(e.messages)
+
+            ReservationSlotService().create_for_consultation(consultation=consultation)
+            consultations.append(consultation)
+
+        return consultations
 
     @transaction.atomic
     def delete(self) -> None:
