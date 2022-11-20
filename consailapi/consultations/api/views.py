@@ -3,10 +3,12 @@ from typing import Any
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
+from rest_framework.mixins import ListModelMixin
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from consailapi.consultations.api.serializers import (
     ConsultationDetailSerializer,
@@ -115,3 +117,15 @@ class ConsultationViewSet(ModelViewSet):
         )
         response_data = self.get_serializer(consultations, many=True).data
         return Response(response_data, status=status.HTTP_201_CREATED)
+
+
+class ConsultationStudentViewSet(GenericViewSet, ListModelMixin):
+    queryset = Consultation.objects.all().select_related("teacher")
+    lookup_field = "uuid"
+    lookup_url_kwarg = "uuid"
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ConsultationSimpleActionSerializer
+
+    def get_queryset(self):
+        uuid = self.kwargs.get("teacher_uuid")
+        return self.queryset.filter(teacher__uuid=uuid).all()

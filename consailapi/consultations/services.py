@@ -50,10 +50,8 @@ class ConsultationService:
         data = deepcopy(consultation_data)
         consultations = []
         for i in range(0, 5):
-            data["start_time"] = consultation_data["start_time"] + timedelta(
-                days=(7 * i)
-            )
-            data["end_time"] = consultation_data["end_time"] + timedelta(days=(7 * i))
+            data["start_time"] = consultation_data["start_time"] + timedelta(weeks=i)
+            data["end_time"] = consultation_data["end_time"] + timedelta(weeks=i)
             consultation = Consultation(teacher=teacher, **data)
             try:
                 consultation.full_clean()
