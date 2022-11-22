@@ -21,7 +21,7 @@ from consailapi.consultations.api.serializers import (
 )
 from consailapi.consultations.models import Consultation, Reservation
 from consailapi.consultations.services import ConsultationService, ReservationService
-from consailapi.users.permissions import IsTeacherPermission
+from consailapi.users.permissions import IsStudentPermission, IsTeacherPermission
 
 
 class ConsultationViewSet(ModelViewSet):
@@ -136,6 +136,8 @@ class ConsultationStudentViewSet(GenericViewSet, ListModelMixin):
     def get_serializer_class(self) -> type[BaseSerializer]:
         if self.action == "get_available_slots":
             return ReservationDurationSerializer
+        if self.action == "create_reservation":
+            return ReservationTimeSerializer
         return ConsultationSimpleActionSerializer
 
     @action(
@@ -155,5 +157,27 @@ class ConsultationStudentViewSet(GenericViewSet, ListModelMixin):
         )
         return Response(
             ReservationTimeSerializer(available_slots, many=True).data,
+            status=status.HTTP_200_OK,
+        )
+
+    @action(
+        methods=["POST"],
+        url_path="create-reservation",
+        detail=True,
+        permission_classes=[IsStudentPermission],
+    )
+    def create_reservation(
+        self, request: Request, *args: Any, **kwargs: Any
+    ) -> Response:
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        consultation = self.get_object()
+        student = self.request.user.student  # noqa
+
+        reservation = ReservationService().create_reservation(
+            consultation=consultation, student=student, **serializer.validated_data
+        )
+        return Response(
+            ReservationSerializer(reservation).data,
             status=status.HTTP_200_OK,
         )
