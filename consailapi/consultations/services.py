@@ -1,5 +1,6 @@
 from copy import deepcopy
 from datetime import timedelta
+from uuid import UUID
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -75,6 +76,15 @@ class ConsultationService:
                 slot.reservation.is_cancelled = True
                 slot.reservation.save()
         self.consultation.delete()
+
+    @transaction.atomic
+    def delete_multiple(self, teacher: Teacher, uuids: [UUID]) -> None:
+        for reservation in Consultation.objects.filter(
+            teacher=teacher, uuid__in=uuids, slots__reservation__isnull=False
+        ):
+            reservation.is_cancelled = True
+            reservation.save()
+        Consultation.objects.filter(teacher=teacher, uuid__in=uuids).delete()
 
     @transaction.atomic
     def update_hours(self, consultation_data: dict) -> Consultation:

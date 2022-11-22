@@ -18,6 +18,7 @@ from consailapi.consultations.api.serializers import (
     ReservationSerializer,
     ReservationTimeSerializer,
     ReservationUuidSerializer,
+    UUIDListSerializer,
 )
 from consailapi.consultations.models import Consultation, Reservation
 from consailapi.consultations.services import ConsultationService, ReservationService
@@ -41,6 +42,8 @@ class ConsultationViewSet(ModelViewSet):
             return ConsultationSimpleActionSerializer
         elif self.action == "cancel_reservation":
             return ReservationUuidSerializer
+        elif self.action == "delete_planned_consultation":
+            return UUIDListSerializer
         else:
             return ConsultationDetailSerializer
 
@@ -112,7 +115,7 @@ class ConsultationViewSet(ModelViewSet):
     def create_for_a_month_forward(
         self, request: Request, *args: Any, **kwargs: Any
     ) -> Response:
-        teacher = self.request.user.teacher  # noqa
+        teacher = request.user.teacher  # noqa
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         consultations = ConsultationService().create_multiple(
@@ -120,6 +123,17 @@ class ConsultationViewSet(ModelViewSet):
         )
         response_data = self.get_serializer(consultations, many=True).data
         return Response(response_data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=["POST"], url_path="delete-multiple")
+    def delete_planned_consultation(
+        self, request: Request, *args: Any, **kwargs: Any
+    ) -> Response:
+        teacher = request.user.teacher  # noqa
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.data
+        ConsultationService().delete_multiple(teacher=teacher, uuids=data.get("uuids"))
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ConsultationStudentViewSet(GenericViewSet, ListModelMixin):

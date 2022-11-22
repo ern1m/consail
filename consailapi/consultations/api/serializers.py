@@ -37,6 +37,12 @@ class ReservationUuidSerializer(serializers.ModelSerializer):
         ]
 
 
+class UUIDListSerializer(serializers.Serializer):
+    uuids = serializers.ListField(
+        child=serializers.UUIDField(), allow_empty=True, required=True
+    )
+
+
 class ReservationTimeSerializer(serializers.Serializer):
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
