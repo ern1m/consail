@@ -155,3 +155,7 @@ class ReservationSlot(BaseModel):
     @property
     def end_time(self) -> datetime:
         return self.start_time + timedelta(minutes=15)
+
+    @property
+    def consultation_uuid(self) -> str:
+        return self.consultation.uuid_str

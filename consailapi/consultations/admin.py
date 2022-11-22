@@ -41,8 +41,14 @@ class ReservationAdmin(admin.ModelAdmin):
 
 @admin.register(ReservationSlot)
 class ReservationSlot(admin.ModelAdmin):
-    list_display = ["consultation", "start_time", "uuid", "reservation"]
-    readonly_fields = [
+    list_display = [
+        "consultation",
+        "consultation_uuid",
+        "start_time",
         "uuid",
+        "reservation",
     ]
+    readonly_fields = ["uuid", "consultation_uuid"]
+    search_fields = ["uuid", "consultation_uuid"]
     list_select_related = ["consultation", "reservation"]
+    list_filter = ["consultation__uuid"]
