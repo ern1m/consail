@@ -3,7 +3,7 @@ from typing import Any
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
-from rest_framework.mixins import ListModelMixin
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -119,7 +119,7 @@ class ConsultationViewSet(ModelViewSet):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
-class ConsultationStudentViewSet(GenericViewSet, ListModelMixin):
+class ConsultationStudentViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     queryset = Consultation.objects.all().select_related("teacher")
     lookup_field = "uuid"
     lookup_url_kwarg = "uuid"
@@ -129,3 +129,8 @@ class ConsultationStudentViewSet(GenericViewSet, ListModelMixin):
     def get_queryset(self):
         uuid = self.kwargs.get("teacher_uuid")
         return self.queryset.filter(teacher__uuid=uuid).all()
+
+    def get_serializer_class(self) -> type[BaseSerializer]:
+        if self.action in ["retrieve"]:
+            return ConsultationDetailSerializer
+        return ConsultationSimpleActionSerializer
