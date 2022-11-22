@@ -1,9 +1,10 @@
+from datetime import timedelta
 from typing import Any
 
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
-from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -13,7 +14,9 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from consailapi.consultations.api.serializers import (
     ConsultationDetailSerializer,
     ConsultationSimpleActionSerializer,
+    ReservationDurationSerializer,
     ReservationSerializer,
+    ReservationTimeSerializer,
     ReservationUuidSerializer,
 )
 from consailapi.consultations.models import Consultation, Reservation
@@ -119,7 +122,7 @@ class ConsultationViewSet(ModelViewSet):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
-class ConsultationStudentViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
+class ConsultationStudentViewSet(GenericViewSet, ListModelMixin):
     queryset = Consultation.objects.all().select_related("teacher")
     lookup_field = "uuid"
     lookup_url_kwarg = "uuid"
@@ -131,6 +134,26 @@ class ConsultationStudentViewSet(GenericViewSet, ListModelMixin, RetrieveModelMi
         return self.queryset.filter(teacher__uuid=uuid).all()
 
     def get_serializer_class(self) -> type[BaseSerializer]:
-        if self.action in ["retrieve"]:
-            return ConsultationDetailSerializer
+        if self.action == "get_available_slots":
+            return ReservationDurationSerializer
         return ConsultationSimpleActionSerializer
+
+    @action(
+        methods=["POST"],
+        url_path="get-available-slots",
+        detail=True,
+    )
+    def get_available_slots(
+        self, request: Request, *args: Any, **kwargs: Any
+    ) -> Response:
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        consultation = self.get_object()
+        duration = timedelta(minutes=serializer.validated_data.get("duration"))
+        available_slots = ConsultationService(consultation).get_available_slots(
+            duration
+        )
+        return Response(
+            ReservationTimeSerializer(available_slots, many=True).data,
+            status=status.HTTP_200_OK,
+        )

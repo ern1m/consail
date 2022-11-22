@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from consailapi.consultations.consts import ReservationDurationInt
 from consailapi.consultations.models import Consultation, Reservation
 from consailapi.students.api.serializers import StudentDetailSerializer
 
@@ -34,3 +35,12 @@ class ReservationUuidSerializer(serializers.ModelSerializer):
         fields = [
             "reservation_uuid",
         ]
+
+
+class ReservationTimeSerializer(serializers.Serializer):
+    start_time = serializers.DateTimeField()
+    end_time = serializers.DateTimeField()
+
+
+class ReservationDurationSerializer(serializers.Serializer):
+    duration = serializers.ChoiceField(choices=ReservationDurationInt.choices)
