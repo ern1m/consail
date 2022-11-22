@@ -94,6 +94,29 @@ class ConsultationService:
         ReservationSlotService().create_for_consultation(consultation=self.consultation)
         return self.consultation
 
+    def get_available_slots(self, duration: timedelta) -> list:
+        if not self.consultation:
+            raise ValueError("Missing consultation")
+        free_slots = self.consultation.slots.all().filter(reservation__isnull=True)
+        free_slots_data = []
+        for slot in free_slots:
+            start_time = slot.start_time
+            end_time = start_time + duration
+            if start_time + duration > self.consultation.end_time:
+                break
+            if (
+                self.consultation.slots.all()
+                .filter(
+                    start_time__gte=start_time,
+                    start_time__lt=end_time,
+                    reservation__isnull=False,
+                )
+                .exists()
+            ):
+                continue
+            free_slots_data.append({"start_time": start_time, "end_time": end_time})
+        return free_slots_data
+
 
 class ReservationService:
     def __init__(self, reservation: Reservation | None = None):
