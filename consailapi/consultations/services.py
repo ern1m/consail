@@ -6,6 +6,7 @@ from django.db import transaction
 from rest_framework.exceptions import ValidationError as RestValidationError
 
 from consailapi.consultations.models import Consultation, Reservation, ReservationSlot
+from consailapi.students.models import Student
 from consailapi.teachers.models import Teacher
 
 
@@ -129,3 +130,29 @@ class ReservationService:
         self.reservation.save()
         self.reservation.slots.update(reservation=None)
         return self.reservation
+
+    @transaction.atomic
+    def create_reservation(
+        self, consultation: Consultation, student: Student, **reservation_data
+    ) -> Reservation:
+        start_time = reservation_data.get("start_time")
+        end_time = reservation_data.get("end_time")
+        slots = consultation.slots.filter(
+            start_time__gte=start_time, start_time__lte=end_time - timedelta(minutes=15)
+        )
+        if slots.filter(reservation__isnull=False).exists():
+            raise ValueError("Consultation slots are not free")
+        reservation = Reservation(
+            teacher=consultation.teacher,
+            student=student,
+            start_time=start_time,
+            end_time=end_time,
+        )
+        try:
+            reservation.full_clean()
+            reservation.save()
+            self.reservation = reservation
+        except ValidationError as e:
+            raise RestValidationError(e.messages)
+        slots.update(reservation=reservation)
+        return reservation
