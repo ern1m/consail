@@ -16,7 +16,14 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reservation
-        fields = ["uuid", "student", "is_cancelled", "start_time", "end_time"]
+        fields = [
+            "uuid",
+            "student",
+            "is_cancelled",
+            "start_time",
+            "end_time",
+            "was_absent",
+        ]
 
 
 class ConsultationDetailSerializer(serializers.ModelSerializer):

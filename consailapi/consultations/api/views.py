@@ -4,7 +4,7 @@ from typing import Any
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
-from rest_framework.mixins import ListModelMixin
+from rest_framework.mixins import DestroyModelMixin, ListModelMixin, RetrieveModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -195,3 +195,39 @@ class ConsultationStudentViewSet(GenericViewSet, ListModelMixin):
             ReservationSerializer(reservation).data,
             status=status.HTTP_200_OK,
         )
+
+
+class ReservationViewSet(
+    GenericViewSet,
+    ListModelMixin,
+    RetrieveModelMixin,
+    DestroyModelMixin,
+):
+    queryset = Reservation.objects.all().select_related("teacher", "student")
+    lookup_field = "uuid"
+    lookup_url_kwarg = "uuid"
+    permission_classes = (IsAuthenticated, IsStudentPermission)
+    serializer_class = ReservationSerializer
+
+    def get_queryset(self):
+        if "make_absent" in self.action:
+            return self.queryset.filter(teacher=self.request.user.teacher)  # noqa
+        return self.queryset.filter(student=self.request.user.student)  # noqa
+
+    def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        obj: Reservation = self.get_object()
+        obj.is_cancelled = True
+        obj.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        methods=["PATCH"],
+        url_path="absent",
+        detail=True,
+        permission_classes=[IsStudentPermission],
+    )
+    def make_absent(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        obj: Reservation = self.get_object()
+        serializer = self.get_serializer(obj)
+        ReservationService(obj).make_absent(**serializer.data)
+        return Response(data=serializer.data)

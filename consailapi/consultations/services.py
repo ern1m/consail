@@ -1,5 +1,6 @@
 from copy import deepcopy
 from datetime import timedelta
+from typing import Any
 from uuid import UUID
 
 from django.core.exceptions import ValidationError
@@ -143,7 +144,7 @@ class ReservationService:
 
     @transaction.atomic
     def create_reservation(
-        self, consultation: Consultation, student: Student, **reservation_data
+        self, consultation: Consultation, student: Student, **reservation_data: Any
     ) -> Reservation:
         start_time = reservation_data.get("start_time")
         end_time = reservation_data.get("end_time")
@@ -166,3 +167,8 @@ class ReservationService:
             raise RestValidationError(e.messages)
         slots.update(reservation=reservation)
         return reservation
+
+    @transaction.atomic
+    def make_absent(self, **reservation_data: Any) -> None:
+        self.reservation.was_absent = reservation_data.get("was_absent", True)
+        self.reservation.save()
