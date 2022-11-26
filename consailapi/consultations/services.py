@@ -1,5 +1,6 @@
 from copy import deepcopy
 from datetime import timedelta
+from typing import Any
 from uuid import UUID
 
 from django.core.exceptions import ValidationError
@@ -141,6 +142,10 @@ class ReservationService:
     def cancel_reservation(self) -> Reservation:
         if not self.reservation:
             raise ValueError("Missing reservation")
+
+        if self.reservation.was_absent:
+            raise ValidationError("You can not cansel this reservation")
+
         self.reservation.is_cancelled = True
         self.reservation.save()
         self.reservation.slots.update(reservation=None)
@@ -148,7 +153,7 @@ class ReservationService:
 
     @transaction.atomic
     def create_reservation(
-        self, consultation: Consultation, student: Student, **reservation_data
+        self, consultation: Consultation, student: Student, **reservation_data: Any
     ) -> Reservation:
         uuids = reservation_data.get("uuids")
         slots = consultation.slots.filter(uuid__in=uuids).order_by("start_time")
@@ -168,3 +173,11 @@ class ReservationService:
             raise RestValidationError(e.messages)
         slots.update(reservation=reservation)
         return reservation
+
+    @transaction.atomic
+    def make_absent(self, **reservation_data: Any) -> None:
+        if not self.reservation:
+            raise ValueError("Missing reservation")
+
+        self.reservation.was_absent = reservation_data.get("was_absent", True)
+        self.reservation.save()

@@ -108,6 +108,7 @@ class Reservation(BaseModel):
     start_time = models.DateTimeField(_("start time"), null=False, blank=False)
     end_time = models.DateTimeField(_("end time"), null=False, blank=False)
     is_cancelled = models.BooleanField(_("is cancelled"), default=False)
+    was_absent = models.BooleanField(_("was absent"), default=False)
 
     class Meta:
         verbose_name = _("Reservation")
