@@ -137,6 +137,10 @@ class ReservationService:
     def cancel_reservation(self) -> Reservation:
         if not self.reservation:
             raise ValueError("Missing reservation")
+
+        if self.reservation.was_absent:
+            raise ValidationError("You can not cansel this reservation")
+
         self.reservation.is_cancelled = True
         self.reservation.save()
         self.reservation.slots.update(reservation=None)
@@ -170,5 +174,8 @@ class ReservationService:
 
     @transaction.atomic
     def make_absent(self, **reservation_data: Any) -> None:
+        if not self.reservation:
+            raise ValueError("Missing reservation")
+
         self.reservation.was_absent = reservation_data.get("was_absent", True)
         self.reservation.save()

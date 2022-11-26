@@ -215,16 +215,15 @@ class ReservationViewSet(
         return self.queryset.filter(student=self.request.user.student)  # noqa
 
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        obj: Reservation = self.get_object()
-        obj.is_cancelled = True
-        obj.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        obj = ReservationService(self.get_object()).cancel_reservation()
+        serializer = self.get_serializer(obj)
+        return Response(serializer.data)
 
     @action(
         methods=["PATCH"],
         url_path="absent",
         detail=True,
-        permission_classes=[IsStudentPermission],
+        permission_classes=[IsTeacherPermission],
     )
     def make_absent(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         obj: Reservation = self.get_object()
