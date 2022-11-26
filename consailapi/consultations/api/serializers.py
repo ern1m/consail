@@ -48,5 +48,11 @@ class ReservationTimeSerializer(serializers.Serializer):
     end_time = serializers.DateTimeField()
 
 
+class ReservationTimeAndUuidsSerializer(serializers.Serializer):
+    start_time = serializers.DateTimeField()
+    end_time = serializers.DateTimeField()
+    uuids = serializers.ListField(child=serializers.UUIDField())
+
+
 class ReservationDurationSerializer(serializers.Serializer):
     duration = serializers.ChoiceField(choices=ReservationDurationInt.choices)

@@ -125,7 +125,12 @@ class ConsultationService:
                 .exists()
             ):
                 continue
-            free_slots_data.append({"start_time": start_time, "end_time": end_time})
+            uuids = ReservationSlot.objects.filter(
+                start_time__gte=start_time, start_time__lt=end_time
+            ).values_list("uuid", flat=True)
+            free_slots_data.append(
+                {"start_time": start_time, "end_time": end_time, "uuids": uuids}
+            )
         return free_slots_data
 
 
@@ -145,18 +150,15 @@ class ReservationService:
     def create_reservation(
         self, consultation: Consultation, student: Student, **reservation_data
     ) -> Reservation:
-        start_time = reservation_data.get("start_time")
-        end_time = reservation_data.get("end_time")
-        slots = consultation.slots.filter(
-            start_time__gte=start_time, start_time__lte=end_time - timedelta(minutes=15)
-        )
+        uuids = reservation_data.get("uuids")
+        slots = consultation.slots.filter(uuid__in=uuids).order_by("start_time")
         if slots.filter(reservation__isnull=False).exists():
-            raise ValueError("Consultation slots are not free")
+            raise RestValidationError("Consultation slots are not free")
         reservation = Reservation(
             teacher=consultation.teacher,
             student=student,
-            start_time=start_time,
-            end_time=end_time,
+            start_time=slots.first().start_time,
+            end_time=slots.last().start_time + timedelta(minutes=15),
         )
         try:
             reservation.full_clean()
