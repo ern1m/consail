@@ -16,12 +16,13 @@ from consailapi.consultations.api.serializers import (
     ConsultationSimpleActionSerializer,
     ReservationDurationSerializer,
     ReservationSerializer,
-    ReservationTimeSerializer,
+    ReservationTimeAndUuidsSerializer,
     ReservationUuidSerializer,
     UUIDListSerializer,
 )
 from consailapi.consultations.models import Consultation, Reservation
 from consailapi.consultations.services import ConsultationService, ReservationService
+from consailapi.shared.api.serializers import UuidListSerializer
 from consailapi.users.permissions import IsStudentPermission, IsTeacherPermission
 
 
@@ -151,7 +152,7 @@ class ConsultationStudentViewSet(GenericViewSet, ListModelMixin):
         if self.action == "get_available_slots":
             return ReservationDurationSerializer
         if self.action == "create_reservation":
-            return ReservationTimeSerializer
+            return UuidListSerializer
         return ConsultationSimpleActionSerializer
 
     @action(
@@ -170,7 +171,7 @@ class ConsultationStudentViewSet(GenericViewSet, ListModelMixin):
             duration
         )
         return Response(
-            ReservationTimeSerializer(available_slots, many=True).data,
+            ReservationTimeAndUuidsSerializer(available_slots, many=True).data,
             status=status.HTTP_200_OK,
         )
 
