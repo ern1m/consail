@@ -39,7 +39,7 @@ class Consultation(BaseModel):
         return Reservation.objects.filter(slots__in=self.slots.all()).distinct()
 
     def clean(self) -> None:
-        if self.start_time >= self.end_time:
+        if self.start_time and self.end_time and self.start_time >= self.end_time:
             raise ValidationError(_("Start time can't be greater than end time"))
         if (
             self.start_time
