@@ -36,7 +36,7 @@ class Consultation(BaseModel):
 
     @property
     def reservations(self) -> QuerySet["Reservation"]:
-        return Reservation.objects.filter(slots__in=self.slots.all()).distinct("uuid")
+        return Reservation.objects.filter(slots__in=self.slots.all()).distinct()
 
     def clean(self) -> None:
         if self.start_time >= self.end_time:
