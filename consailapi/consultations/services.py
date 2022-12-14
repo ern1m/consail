@@ -175,9 +175,10 @@ class ReservationService:
         return reservation
 
     @transaction.atomic
-    def make_absent(self, **reservation_data: Any) -> None:
+    def make_absent(self) -> Reservation:
         if not self.reservation:
             raise ValueError("Missing reservation")
 
-        self.reservation.was_absent = reservation_data.get("was_absent", True)
+        self.reservation.was_absent = True
         self.reservation.save()
+        return self.reservation

@@ -227,7 +227,6 @@ class ReservationViewSet(
         permission_classes=[IsTeacherPermission],
     )
     def make_absent(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        obj: Reservation = self.get_object()
+        obj: Reservation = ReservationService(self.get_object()).make_absent()
         serializer = self.get_serializer(obj)
-        ReservationService(obj).make_absent(**serializer.data)
         return Response(data=serializer.data)
