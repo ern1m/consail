@@ -1,6 +1,7 @@
 from datetime import timedelta
 from typing import Any
 
+from django.db.models import QuerySet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
@@ -12,6 +13,7 @@ from rest_framework.serializers import BaseSerializer
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from consailapi.consultations.api.serializers import (
+    AbsentReservationStudentSerializer,
     ConsultationDetailSerializer,
     ConsultationSimpleActionSerializer,
     ReservationDurationSerializer,
@@ -23,6 +25,7 @@ from consailapi.consultations.api.serializers import (
 from consailapi.consultations.models import Consultation, Reservation
 from consailapi.consultations.services import ConsultationService, ReservationService
 from consailapi.shared.api.serializers import UuidListSerializer
+from consailapi.students.models import Student
 from consailapi.users.permissions import IsStudentPermission, IsTeacherPermission
 
 
@@ -230,3 +233,22 @@ class ReservationViewSet(
         obj: Reservation = ReservationService(self.get_object()).make_absent()
         serializer = self.get_serializer(obj)
         return Response(data=serializer.data)
+
+
+class AbsentReservationList(GenericViewSet, ListModelMixin):
+    lookup_field = "uuid"
+    lookup_url_kwarg = "uuid"
+    permission_classes = (IsAuthenticated,)
+    serializer_class = AbsentReservationStudentSerializer
+
+    def get_queryset(self) -> QuerySet[Student]:
+        if hasattr(self.request.user, "student"):
+            return Student.objects.filter(
+                uuid=self.request.user.student.uuid,
+                student_reservation__was_absent=True,
+            ).all()
+        if hasattr(self.request.user, "teacher"):
+            return Student.objects.filter(
+                student_reservation__teacher=self.request.user.teacher,
+                student_reservation__was_absent=True,
+            ).all()

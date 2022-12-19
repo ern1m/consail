@@ -3,6 +3,7 @@ from rest_framework import serializers
 from consailapi.consultations.consts import ReservationDurationInt
 from consailapi.consultations.models import Consultation, Reservation
 from consailapi.students.api.serializers import StudentDetailSerializer
+from consailapi.students.models import Student
 
 
 class ConsultationSimpleActionSerializer(serializers.ModelSerializer):
@@ -63,3 +64,29 @@ class ReservationTimeAndUuidsSerializer(serializers.Serializer):
 
 class ReservationDurationSerializer(serializers.Serializer):
     duration = serializers.ChoiceField(choices=ReservationDurationInt.choices)
+
+
+class ReservationBaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = [
+            "uuid",
+            "is_cancelled",
+            "start_time",
+            "end_time",
+            "was_absent",
+        ]
+
+
+class AbsentReservationStudentSerializer(serializers.ModelSerializer):
+    student_reservation = ReservationBaseSerializer(many=True)
+
+    class Meta:
+        model = Student
+        fields = [
+            "uuid",
+            "email",
+            "first_name",
+            "last_name",
+            "student_reservation",
+        ]

@@ -96,6 +96,7 @@ class Reservation(BaseModel):
         verbose_name=_("student"),
         null=False,
         blank=False,
+        related_name="student_reservation",
         on_delete=models.CASCADE,
     )
     teacher = models.ForeignKey(
@@ -103,6 +104,7 @@ class Reservation(BaseModel):
         verbose_name=_("teacher"),
         null=False,
         blank=False,
+        related_name="teachers_reservation",
         on_delete=models.CASCADE,
     )
     start_time = models.DateTimeField(_("start time"), null=False, blank=False)
