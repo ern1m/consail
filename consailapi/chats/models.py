@@ -24,6 +24,7 @@ class Thread(BaseModel):
     class Meta:
         verbose_name = _("thread")
         verbose_name_plural = _("threads")
+        unique_together = (("teacher", "student"),)
 
     def __str__(self):
         return self.uuid_str

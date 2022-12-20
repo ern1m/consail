@@ -11,9 +11,13 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from consailapi.chats.api.serializers import MessageSerializer, ThreadSerializer
+from consailapi.chats.api.serializers import (
+    CreateThreadSerializer,
+    MessageSerializer,
+    ThreadSerializer,
+)
 from consailapi.chats.models import Message, Thread
-from consailapi.chats.services import MessageService
+from consailapi.chats.services import MessageService, ThreadService
 from consailapi.students.models import Student
 from consailapi.teachers.consts import ResponseMessages
 from consailapi.teachers.models import Teacher
@@ -42,6 +46,14 @@ class ThreadViewSet(ModelViewSet):
                 .prefetch_related("student__messages", "teacher__messages")
             )
 
+    def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = request.data
+        serializer = CreateThreadSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        obj = ThreadService().create(serializer.validated_data)
+        serializer = self.get_serializer(obj)
+        return Response(status=status.HTTP_201_CREATED, data=serializer.data)
+
 
 class MessagesViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
     serializer_class = MessageSerializer
@@ -49,6 +61,7 @@ class MessagesViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Message.objects.all().select_related("sender")
     permission_classes = (IsAuthenticated,)
     lookup_field = "uuid"
+    lookup_url_kwarg = "uuid"
     search_fields = [
         "content",
     ]
