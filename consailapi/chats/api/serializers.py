@@ -21,8 +21,8 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class ThreadSerializer(serializers.ModelSerializer):
-    teacher = serializers.UUIDField(source="teacher.uuid", read_only=True)
-    student = serializers.UUIDField(source="student.uuid", read_only=True)
+    teacher = UserSerializer(read_only=True)
+    student = UserSerializer(read_only=True)
     messages = MessageSerializer(many=True, required=False)
 
     class Meta:
