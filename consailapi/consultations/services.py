@@ -5,6 +5,7 @@ from uuid import UUID
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.utils import timezone
 from rest_framework.exceptions import ValidationError as RestValidationError
 
 from consailapi.consultations.models import Consultation, Reservation, ReservationSlot
@@ -142,9 +143,11 @@ class ReservationService:
     def cancel_reservation(self) -> Reservation:
         if not self.reservation:
             raise ValueError("Missing reservation")
-
-        if self.reservation.was_absent:
-            raise ValidationError("You can not cansel this reservation")
+        if (
+            self.reservation.was_absent
+            or self.reservation.start_time < timezone.now() + timedelta(days=1)
+        ):
+            raise RestValidationError("You cannot cancel this reservation")
 
         self.reservation.is_cancelled = True
         self.reservation.save()
@@ -155,6 +158,11 @@ class ReservationService:
     def create_reservation(
         self, consultation: Consultation, student: Student, **reservation_data: Any
     ) -> Reservation:
+        if consultation.start_time < timezone.now() + timedelta(hours=1):
+            raise RestValidationError(
+                "It is too late to create a reservation for this consultation"
+            )
+
         uuids = reservation_data.get("uuids")
         slots = consultation.slots.filter(uuid__in=uuids).order_by("start_time")
         if slots.filter(reservation__isnull=False).exists():
