@@ -2,9 +2,11 @@ from datetime import timedelta
 from typing import Any
 
 from django.db.models import QuerySet
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import ValidationError as RestValidationError
 from rest_framework.mixins import DestroyModelMixin, ListModelMixin, RetrieveModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -219,6 +221,8 @@ class ReservationViewSet(
         return self.queryset.filter(student=self.request.user.student)  # noqa
 
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        if self.get_object().start_time < timezone.now() + timedelta(days=1):
+            raise RestValidationError("You cannot cancel this reservation")
         obj = ReservationService(self.get_object()).cancel_reservation()
         serializer = self.get_serializer(obj)
         return Response(serializer.data)

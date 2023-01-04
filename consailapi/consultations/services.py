@@ -143,11 +143,6 @@ class ReservationService:
     def cancel_reservation(self) -> Reservation:
         if not self.reservation:
             raise ValueError("Missing reservation")
-        if (
-            self.reservation.was_absent
-            or self.reservation.start_time < timezone.now() + timedelta(days=1)
-        ):
-            raise RestValidationError("You cannot cancel this reservation")
 
         self.reservation.is_cancelled = True
         self.reservation.save()
