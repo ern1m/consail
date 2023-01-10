@@ -15,7 +15,9 @@
 
   <p>
 {#    Click <a href="https://consail.site">here</a> to confirm your email address#}
-    {{ context.message }}
+    {% autoescape on %}
+    {{ context.message | safe }}
+    {% endautoescape %}
   </p>
 
   <p>

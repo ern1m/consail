@@ -60,7 +60,7 @@ class RegisterViewSet(
         send_email_task.delay(
             user_uuid=user.uuid,
             temp_content={
-                "message": "Click <a href='https://consail.site'>here</a> to confirm account"
+                "message": "Click <a href='https://consail.site'>here</a> to confirm your account"
             },
         )
         return Response(status=status.HTTP_201_CREATED, data=obj.data)
