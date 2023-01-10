@@ -57,19 +57,12 @@ class RegisterViewSet(
 
         user = User.objects.filter(email=obj.data.get("email")).first()
 
-        # send_email_task.delay(
-        #     user=obj.data,
-        #     temp_content={
-        #         "message": "Click <a href='https://consail.site'>here</a> to confirm account"
-        #     },
-        # )
-        send_email_task(
+        send_email_task.delay(
             user=user,
             temp_content={
                 "message": "Click <a href='https://consail.site'>here</a> to confirm account"
             },
         )
-
         return Response(status=status.HTTP_201_CREATED, data=obj.data)
 
 
