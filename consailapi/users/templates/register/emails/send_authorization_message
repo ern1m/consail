@@ -1,7 +1,7 @@
 {% load i18n %}
 {% translate "Hi" %} {{ user.get_full_name }}
 
-Click here to confirm your email address
+{{ context.message }}
 
 {% translate "Best regards" %}
 

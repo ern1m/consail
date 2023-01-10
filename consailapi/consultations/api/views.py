@@ -112,7 +112,7 @@ class ConsultationViewSet(ModelViewSet):
             ).first()
         except Reservation.DoesNotExist:
             raise NotFound("Missing reservation")
-        reservation = ReservationService(reservation).cancel_reservation()
+        reservation = ReservationService(reservation).cancel_reservation(request.user)
         return Response(
             ReservationSerializer(reservation).data, status=status.HTTP_200_OK
         )
@@ -223,7 +223,7 @@ class ReservationViewSet(
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         if self.get_object().start_time < timezone.now() + timedelta(days=1):
             raise RestValidationError("You cannot cancel this reservation")
-        obj = ReservationService(self.get_object()).cancel_reservation()
+        obj = ReservationService(self.get_object()).cancel_reservation(request.user)
         serializer = self.get_serializer(obj)
         return Response(serializer.data)
 

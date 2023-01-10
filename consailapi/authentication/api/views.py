@@ -17,6 +17,7 @@ from consailapi.students.api.serializers import (
 from consailapi.students.models import Student
 from consailapi.students.services import StudentService
 from consailapi.users.helpers import send_email_task
+from consailapi.users.models import User
 
 
 class LoginView(APIView):
@@ -54,8 +55,16 @@ class RegisterViewSet(
         obj.is_valid(raise_exception=True)
         obj.save()
 
-        send_email_task.delay(
-            user=obj.data,
+        user = User.objects.filter(email=obj.data.get("email")).first()
+
+        # send_email_task.delay(
+        #     user=obj.data,
+        #     temp_content={
+        #         "message": "Click <a href='https://consail.site'>here</a> to confirm account"
+        #     },
+        # )
+        send_email_task(
+            user=user,
             temp_content={
                 "message": "Click <a href='https://consail.site'>here</a> to confirm account"
             },

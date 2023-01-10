@@ -224,11 +224,11 @@ EMAIL_REPLY_TO = env("DJANGO_EMAIL_REPLY_TO", default="")
 DEFAULT_FROM_EMAIL = env("DJANGO_DEFAULT_FROM_EMAIL", default="")
 EMAIL_FROM_ADDRESS = env("DJANGO_EMAIL_FROM_ADDRESS", default="")
 EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="")
-EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="")
-EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default="")
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_TIMEOUT = 5
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_SSL = True
+EMAIL_PORT = 465
+EMAIL_TIMEOUT = 500
 
 # ADMIN
 # ------------------------------------------------------------------------------

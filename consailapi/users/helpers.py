@@ -16,19 +16,20 @@ def get_user_data_dict(user: User) -> dict:
 
 
 @app.task(bind=True, soft_time_timit=21600, time_limit=21610)
-def send_email_task(self, user: User | dict, temp_content):
-    user_data = get_user_data_dict(user) if isinstance(user, User) else user
+def send_email_task(user: User | dict, temp_content):
     try:
         send_mail(
             subject=f"{settings.EMAIL_SUBJECT_PREFIX} {_('Confirmation mail')}",
             from_email=settings.EMAIL_FROM_ADDRESS,
             message=render_to_string(
-                "register/emails/send_authorization_message", temp_content
+                "register/emails/send_authorization_message",
+                {"context": temp_content, "user": user.get_full_name()},
             ),
             html_message=render_to_string(
-                "register/emails/send_authorization_message.html", temp_content
+                "register/emails/send_authorization_message.html",
+                {"context": temp_content, "user": user.get_full_name()},
             ),
-            recipient_list=[user_data.get("email")],
+            recipient_list=[user.email],
             fail_silently=False,
         )
 

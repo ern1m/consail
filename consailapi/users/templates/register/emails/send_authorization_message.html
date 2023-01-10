@@ -9,12 +9,13 @@
 
   <p>
   <h1>
-    {% translate "Hi" %} <strong>{{ user.get_full_name }} </strong>
+    {% translate "Hi" %} <strong>{{ user }} </strong>
   </h1>
   </p>
 
   <p>
-    Click <a href="https://consail.site">here</a> to confirm your email address
+{#    Click <a href="https://consail.site">here</a> to confirm your email address#}
+    {{ context.message }}
   </p>
 
   <p>

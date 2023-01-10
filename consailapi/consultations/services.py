@@ -11,6 +11,8 @@ from rest_framework.exceptions import ValidationError as RestValidationError
 from consailapi.consultations.models import Consultation, Reservation, ReservationSlot
 from consailapi.students.models import Student
 from consailapi.teachers.models import Teacher
+from consailapi.users.helpers import send_email_task
+from consailapi.users.models import User
 
 
 class ReservationSlotService:
@@ -73,10 +75,24 @@ class ConsultationService:
         if not self.consultation:
             raise ValueError("Missing consultation")
 
+        previous_student = None
+        student = None
+
         for slot in self.consultation.slots.all():
             if slot.reservation:
+                student = slot.reservation.student
                 slot.reservation.is_cancelled = True
                 slot.reservation.save()
+
+            if student and student != previous_student:
+                send_email_task.delay(
+                    user=slot.reservation.student,
+                    temp_content={
+                        "message": f"{slot.reservation.teacher.get_full_name()} just cancel your reservation"
+                    },
+                )
+                previous_student = student
+
         self.consultation.delete()
 
     @transaction.atomic
@@ -140,13 +156,20 @@ class ReservationService:
     def __init__(self, reservation: Reservation | None = None):
         self.reservation = reservation
 
-    def cancel_reservation(self) -> Reservation:
+    def cancel_reservation(self, user: User) -> Reservation:
         if not self.reservation:
             raise ValueError("Missing reservation")
 
         self.reservation.is_cancelled = True
         self.reservation.save()
         self.reservation.slots.update(reservation=None)
+        send_email_task.delay(
+            user=user,
+            temp_content={
+                "message": f"Reservation has been canceled {self.reservation.slots.all()}"
+            },
+        )
+
         return self.reservation
 
     @transaction.atomic
@@ -172,9 +195,18 @@ class ReservationService:
             reservation.full_clean()
             reservation.save()
             self.reservation = reservation
+
         except ValidationError as e:
             raise RestValidationError(e.messages)
         slots.update(reservation=reservation)
+
+        send_email_task.delay(
+            user=consultation.teacher,
+            temp_content={
+                "message": f"{student.get_full_name()} just make "
+                f"reservation to {reservation.slots.objects.first().start_time}"
+            },
+        )
         return reservation
 
     @transaction.atomic
