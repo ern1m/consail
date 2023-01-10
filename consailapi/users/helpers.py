@@ -1,4 +1,5 @@
 from smtplib import SMTPException
+from uuid import UUID
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -16,7 +17,9 @@ def get_user_data_dict(user: User) -> dict:
 
 
 @app.task(bind=True, soft_time_timit=21600, time_limit=21610)
-def send_email_task(self, user: User | dict, temp_content):
+def send_email_task(self, user_uuid: UUID, temp_content):
+    user = User.objects.filter(uuid=user_uuid).first()
+
     try:
         send_mail(
             subject=f"{settings.EMAIL_SUBJECT_PREFIX} {_('Confirmation mail')}",

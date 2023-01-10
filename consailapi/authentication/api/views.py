@@ -58,7 +58,7 @@ class RegisterViewSet(
         user = User.objects.filter(email=obj.data.get("email")).first()
 
         send_email_task.delay(
-            user=user,
+            user=user.uuid,
             temp_content={
                 "message": "Click <a href='https://consail.site'>here</a> to confirm account"
             },
