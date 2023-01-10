@@ -86,7 +86,7 @@ class ConsultationService:
 
             if student and student != previous_student:
                 send_email_task.delay(
-                    user=slot.reservation.student.uuid,
+                    user_uuid=slot.reservation.student.uuid,
                     temp_content={
                         "message": f"{slot.reservation.teacher.get_full_name()} just cancel your reservation"
                     },
@@ -164,7 +164,7 @@ class ReservationService:
         self.reservation.save()
         self.reservation.slots.update(reservation=None)
         send_email_task.delay(
-            user=user.uuid,
+            user_uuid=user.uuid,
             temp_content={
                 "message": f"Reservation has been canceled {self.reservation.slots.all()}"
             },
@@ -201,7 +201,7 @@ class ReservationService:
         slots.update(reservation=reservation)
 
         send_email_task.delay(
-            user=consultation.teacher.uuid,
+            user_uuid=consultation.teacher.uuid,
             temp_content={
                 "message": f"{student.get_full_name()} just make "
                 f"reservation to {reservation.slots.objects.first().start_time}"
