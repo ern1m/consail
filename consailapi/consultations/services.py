@@ -204,7 +204,7 @@ class ReservationService:
             user_uuid=consultation.teacher.uuid,
             temp_content={
                 "message": f"{student.get_full_name()} just make "
-                f"reservation to {reservation.slots.objects.first().start_time}"
+                f"reservation to {reservation.slots.first().start_time}"
             },
         )
         return reservation
