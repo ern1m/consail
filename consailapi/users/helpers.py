@@ -16,7 +16,7 @@ def get_user_data_dict(user: User) -> dict:
 
 
 @app.task(bind=True, soft_time_timit=21600, time_limit=21610)
-def send_email_task(user: User | dict, temp_content):
+def send_email_task(self, user: User | dict, temp_content):
     try:
         send_mail(
             subject=f"{settings.EMAIL_SUBJECT_PREFIX} {_('Confirmation mail')}",
