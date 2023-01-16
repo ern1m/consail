@@ -1,23 +1,21 @@
 from rest_framework.permissions import BasePermission
-from rest_framework.request import Request
-from rest_framework.views import APIView
 
 
 class IsTeacherPermission(BasePermission):
-    def has_permission(self, request: Request, view: APIView) -> bool:
+    def has_permission(self, request, view) -> bool:
         user = request.user
         return True if user.is_authenticated and hasattr(user, "teacher") else False
 
 
 class IsStudentPermission(BasePermission):
-    def has_permission(self, request: Request, view: APIView) -> bool:
+    def has_permission(self, request, view) -> bool:
         user = request.user
         return True if user.is_authenticated and hasattr(user, "student") else False
 
 
-class EmailVerifiedPermission(BasePermission):
-    def has_permission(self, request: Request, view: APIView) -> bool:
+class IsAuthenticated(BasePermission):
+    def has_permission(self, request, view) -> bool:
         user = request.user
         return (
-            True if user.is_authenticated and user.email_verified_at else False
-        )  # noqa
+            True if user.is_authenticated and user.email_verified_at else False  # noqa
+        )

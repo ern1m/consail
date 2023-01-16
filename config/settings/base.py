@@ -302,8 +302,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 20,
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
-        "consailapi.users.permissions.EmailVerifiedPermission",
+        # "rest_framework.permissions.IsAuthenticated",
+        "consailapi.users.permissions.IsAuthenticated",
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
@@ -318,7 +318,7 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "ConsailAPI API",
     "DESCRIPTION": "Documentation of API endpoints of ConsailAPI",
     "VERSION": "1.0.0",
-    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
     "SERVERS": [
         {"url": "http://127.0.0.1:8000", "description": "Local Development server"},
         {"url": "https://example.com", "description": "Production server"},
