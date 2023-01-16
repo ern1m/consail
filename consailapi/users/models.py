@@ -1,3 +1,6 @@
+import binascii
+import os
+
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
@@ -58,6 +61,15 @@ class User(AbstractUser, BaseModel):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
     objects = UserManager()
+    register_token = models.CharField(
+        _("Register token"), max_length=40, blank=True, null=True
+    )
+    email_verified_at = models.DateTimeField(
+        _("verified at"),
+        blank=True,
+        null=True,
+        db_index=True,
+    )
 
     def get_absolute_url(self):
         """Get url for user's detail view.
@@ -74,3 +86,11 @@ class User(AbstractUser, BaseModel):
             return UserType.STUDENT.label
         elif hasattr(self, "teacher"):
             return UserType.TEACHER.label
+
+    @classmethod
+    def generate_key(cls):
+        """
+        Generate token. Used in reset password and invitations.
+        :return:
+        """
+        return binascii.hexlify(os.urandom(20)).decode()

@@ -13,3 +13,11 @@ class IsStudentPermission(BasePermission):
     def has_permission(self, request: Request, view: APIView) -> bool:
         user = request.user
         return True if user.is_authenticated and hasattr(user, "student") else False
+
+
+class EmailVerifiedPermission(BasePermission):
+    def has_permission(self, request: Request, view: APIView) -> bool:
+        user = request.user
+        return (
+            True if user.is_authenticated and user.email_verified_at else False
+        )  # noqa

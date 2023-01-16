@@ -19,6 +19,10 @@ class RegisterStudentSerializer(serializers.Serializer):
         return password
 
 
+class AuthorizeSerializer(serializers.Serializer):
+    register_token = serializers.CharField(max_length=40, required=True)
+
+
 class StudentSerializer(UserSerializer):
     username = serializers.CharField(write_only=True)
     is_active = serializers.BooleanField(write_only=True)
