@@ -192,6 +192,6 @@ SPECTACULAR_SETTINGS = {
     ],
 }
 
-FRONTEND_URL = "https://consail.site"
+FRONTEND_URL = "https://consail.site/#"
 
 DEBUG = True

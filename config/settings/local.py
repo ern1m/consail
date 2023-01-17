@@ -61,4 +61,4 @@ CELERY_TASK_EAGER_PROPAGATES = True
 # Your stuff...
 # ------------------------------------------------------------------------------
 
-FRONTEND_URL = "https://consail.site"
+FRONTEND_URL = "https://consail.site/#"
